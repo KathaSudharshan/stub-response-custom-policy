@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+	  xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http-policy="http://www.mulesoft.org/schema/mule/http-policy"
+      xmlns:http-transform="http://www.mulesoft.org/schema/mule/http-policy-transform"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/http-policy http://www.mulesoft.org/schema/mule/http-policy/current/mule-http-policy.xsd
+               http://www.mulesoft.org/schema/mule/http-policy-transform http://www.mulesoft.org/schema/mule/http-policy-transform/current/mule-http-policy-transform.xsd">
+
+
+    <http-policy:proxy name="{{{policyId}}}-custom-policy">
+        <http-policy:source>
+		{{#if evaluateInRequest}}
+		<try>
+		  <set-variable variableName="requestConditionMet" value="{{{requestCondition}}}"/>
+		 <logger level="INFO" doc:name="Logger" doc:id="e14d67ab-2dc3-43bd-bab4-563845feee13" message="{{{requestCondition}}}"/>
+		  <error-handler>
+			<on-error-continue>
+				<http-transform:set-response
+									statusCode="#[400]">
+				<http-transform:body>#[ 'Expression error in request condition' ]</http-transform:body>
+				</http-transform:set-response>
+				</on-error-continue>
+		 </error-handler>
+		 </try>
+           <choice>
+		      <when expression="#[(vars.requestConditionMet default false)]">
+			     <http-transform:set-response statusCode="#[{{{statusCode}}}]">
+					<http-transform:body>{{{payload}}}</http-transform:body>
+					<http-transform:headers>#[attributes.headers]</http-transform:headers>
+				</http-transform:set-response>
+			  </when>
+			  <otherwise>
+			    <logger level="INFO" doc:name="Logger" doc:id="e14d67ab-2dc3-43bd-bab4-563845feee13" message="requestCondition else block"/>
+				<http-policy:execute-next/>
+			  </otherwise>
+		   </choice>		
+		{{else}}
+			 <http-transform:set-response statusCode="#[{{{statusCode}}}]">
+			    <http-transform:body>{{{payload}}}</http-transform:body>
+				<http-transform:headers>#[attributes.headers]</http-transform:headers>
+			</http-transform:set-response>
+			
+		{{/if}}
+
+        </http-policy:source>
+    </http-policy:proxy>
+</mule>

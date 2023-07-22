@@ -1,0 +1,44 @@
+id: stub-response-custom-policy
+name: stub-response-custom-policy
+description: Stub Response Custom Policy
+category: Custom
+type: custom
+resourceLevelSupported: true
+encryptionSupported: false
+standalone: true
+requiredCharacteristics: []
+providedCharacteristics: []
+configuration:
+  - propertyName: evaluateInRequest
+    name: Evaluate in the request
+    description: If the request condition to be evaluated
+    type: boolean
+    optional: true
+    defaultValue: false
+  - propertyName: requestCondition
+    name: Request Condition
+    description: Dataweave expression to evaluate the request condition
+    type: expression
+    optional: true
+    sensitive: false
+    allowMultiple: false
+    dependsOnKey: evaluateInRequest
+    dependsOnValue: true
+  - propertyName: statusCode
+    name: Status Code
+    description: Response status code
+    type: int
+    minimumValue: 0
+    maximumValue: 999
+    optional: false
+    sensitive: false
+    allowMultiple: false
+    defaultValue: 202
+  - propertyName: payload
+    name: Response Payload
+    description: Response payload based on the condition checks
+    type: expression
+    optional: false
+    sensitive: false
+    allowMultiple: false
+        
