@@ -112,9 +112,13 @@ Here,
 - `(ii)` represents to refer HTTP inboud or HTTP outbout logic which needs to be perform either before or after flow or next policy.
 - `(iii)` which indicates tha the next policy or flow should be exeuted.
 
-Please find the attached overview of using this policy.
+### Overview of using this policy.
 ![image](https://github.com/KathaSudharshan/stub-response-custom-policy/assets/138109855/557063af-3500-4f36-b26a-4af24b3cd0f6)
-As per the above flow traffic flows to target system for every request and transaction will be processed to Worlpay to complete the payment process in production. Where traffice should not process to paymemt system for lower enviornments as its deducts payment of test account. Instead of deducting amount MuleSoft system api layer should retrun stud response every time for testing phases. Below is the high level design how it works,
+
+As per the above flow traffic flows to target system for every request and transaction will be processed to Worlpay to complete the payment process in production. Where traffice should not process to paymemt system for lower enviornments as its deducts payment of test account. Instead of deducting amount MuleSoft system api layer should retrun stud response every time for testing phases. 
+
+Below is the high level design how it works,
+
 ![image](https://github.com/KathaSudharshan/stub-response-custom-policy/assets/138109855/eec38d36-d3d2-4adf-9cbb-44cc7cb3486b)
 
 ### Packaging a Policy ###
