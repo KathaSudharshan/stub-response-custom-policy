@@ -1,7 +1,27 @@
 # stub-response-custom-policy
 
 ### Introduction
-Mulesoft Policies can enforces security using whitelisting or blacklisting IPs/CIDR ranges, traffic contoll using SLA, authentication and threat protrctions etc. Custome policies are Out-Of the Box polcies and can anyone implemente to enhance existing or new functionalities based on the use cases.
+Mulesoft Policies can enforces security using whitelisting or blacklisting IPs/CIDR ranges, traffic contoll using SLA, authentication and threat protrctions etc. Custom policies are Out-Of the Box polcies and can anyone implement to enhance existing or new functionalities based on different use cases.
+
+This is a stud-response-custom-policy and can bed used to provide mock response of application/system without generating traffic to target/backend systems. In case of Payment gateway integration  or if target system does not support mutilple enviornments for testing like in SIT/UAT/Performance testing phases then insetad of passing traffic to target systems need to mock traffic inbetween integration layer and havee to retrun standard respons every time from the respective system. So that SIT/UAT/Perofmance testing teams can proceed thier testing without involvement of respective target systems. For these cases this policy helps to omit the traffic to target systems. This policy has a feasibility to mock responses based on condition checks otheriwse for every request.
+
+This policy has following fetaures,
+1. Dynamic Request condiotion checks if required to process specific type of request to target systems.
+2. Setup Statuc Codes as required
+3. Response Payload can setup as required
+
+Below are attribuites have for this policy,
+
+1. Evaluvate Request : Its a boolean property. If its true then will see Request Condition to apply the policy for specific requests otherwise applicable to all traffic.
+2. Request Condition: To evaluate condition whether result is true or flase.
+3. Status Code: To set up status code for the stub response
+4. Resposne Payload: otherwise will only see Status Code and Response payload text boxes. If condition statisifies then  satisifies then only returns stub resposne otherwise traffice flows to target system.
+5. advanced options: has a feasibility whether this policy applied for all operations or specific operations.
+
+Below is the screenshot of policy UI,
+
+![image](https://github.com/KathaSudharshan/stub-response-custom-policy/assets/138109855/56544013-7b0f-48af-8c64-fdbb28945bf2)
+
 
 Below are Custom Policy process flow,
 1. Creation of Custome policy uisng maven archetype
@@ -49,13 +69,13 @@ Here,
 Command prompts to provide below propts to provide,
 policyName and Policy description like as below,
 
-policyName:helloworld-custom-policy
-Policy Description: Hello World Custom Policy
+policyName:stub-response-custom-policy
+Policy Description: Stub response custom policy
 
 Afetr completion of command prompt it generates below files in respective directories,
  ```
 hellowork-custom-policy/
-├── hellowork-custom-policy.yaml
+├── stub-response-custom-policy.yaml
 ├── mule-artifact.json
 ├── pom.xml
 └── src
@@ -71,7 +91,7 @@ The above four files are required to run a custom policy.
     - *mule-maven-plugin*: For creating a deployable jar file,         
     - *maven-deploy-plugin*: For deploying a deployable jar file into exchange.
     - *distributionManagement*: To represent Users exhange.
-2. `helloworld-custom-policy.yaml` to redners the yaml file data to UI
+2. `stub-response-custom-policy.yaml` to redners the yaml file data to UI
 3. `template.xml` file to provide the logic of policy to perform
 4. `mule-artifact.json` this file is prvoide minor version of runtime and securing any sensitive information in UI.
 
@@ -83,11 +103,6 @@ template.xml file contains following code snippet,
 
             <http-policy:execute-next/> --> (iii)
 
-            <http-transform:set-response statusCode="201">
-                <http-transform:body>#[ 'Hello World!' ]</http-transform:body>
-                <http-transform:headers>#[ {'New-Header': 'Hello World!'} ]</http-transform:headers>
-            </http-transform:set-response>
-
         </http-policy:source>
     </http-policy:proxy>
  ```
@@ -97,19 +112,16 @@ Here,
 - `(ii)` represents to refer HTTP inboud or HTTP outbout logic which needs to be perform either before or after flow or next policy.
 - `(iii)` which indicates tha the next policy or flow should be exeuted.
 
-As per the above logic, overriding the result of API as "Hello World!" and status code as 201 irrespective of the response.
-
-![image](https://github.com/KathaSudharshan/mule-custom-policies/assets/138109855/1859a7dc-c04f-4104-b636-d658114878e3)
-
+Please find the attached overview of using this policy.
+![image](https://github.com/KathaSudharshan/stub-response-custom-policy/assets/138109855/557063af-3500-4f36-b26a-4af24b3cd0f6)
+As per the above flow traffic flows to target system for every request and transaction will be processed to Worlpay to complete the payment process in production. Where traffice should not process to paymemt system for lower enviornments as its deducts payment of test account. Instead of deducting amount MuleSoft system api layer should retrun stud response every time for testing phases. Below is the high level design how it works,
+![image](https://github.com/KathaSudharshan/stub-response-custom-policy/assets/138109855/eec38d36-d3d2-4adf-9cbb-44cc7cb3486b)
 
 ### Packaging a Policy ###
 After completion of custom policy implemenation, package a policy to deploy into exchange. Use below maven command to create a JAR file,
  ```bash
  mvn clean package
   ```
- ![image](https://github.com/KathaSudharshan/mule-custom-policies/assets/138109855/d0c168d5-0041-46f8-ad54-5fd61b13280d)
-![image](https://github.com/KathaSudharshan/mule-custom-policies/assets/138109855/2e541204-a537-4e38-86fe-1ef73951d4c8)
-
 
 ### Deploy policy in exchange ###
 
@@ -118,20 +130,32 @@ To deploy ploicy in Anypoint Exchange execute below command
  ```bash
  mvn deploy
   ```
-![image](https://github.com/KathaSudharshan/mule-custom-policies/assets/138109855/b9d63e56-2639-433f-b693-ab34ff06a969)
-![image](https://github.com/KathaSudharshan/mule-custom-policies/assets/138109855/82ebd0c3-4701-421d-b7fc-52dff2ff49eb)
-
 After successfull deploymnet custom policy will visible in anypoint platform API Manager. Like as below
-![image](https://github.com/KathaSudharshan/mule-custom-policies/assets/138109855/130684a6-0d63-4018-9a73-c372de5630f3)
+![image](https://github.com/KathaSudharshan/stub-response-custom-policy/assets/138109855/34fcf196-1533-4ae8-b45c-f671c0f76b18)
 
 Apply policy to any of the API and observe the response of API result and it shows as shown below,
+
+Policy without verifiying simulate flag,
+![image](https://github.com/KathaSudharshan/stub-response-custom-policy/assets/138109855/bff64f65-2791-4279-94de-6d12a8a351ae)
+
 
 API response before applyoing a policy,
 ![image](https://github.com/KathaSudharshan/mule-custom-policies/assets/138109855/4c2664f9-39cc-410a-a2d2-d0d346f1ea3f)
 
 API response after applying a policy,
-![image](https://github.com/KathaSudharshan/mule-custom-policies/assets/138109855/f34002cd-01b6-4135-a172-cbd2b43df3d8)
-![image](https://github.com/KathaSudharshan/mule-custom-policies/assets/138109855/4f437d8d-6c8b-4ff5-a0c1-3f80a86d0485)
+![image](https://github.com/KathaSudharshan/stub-response-custom-policy/assets/138109855/09258dce-ae24-43dd-bc16-75831e072d15)
+Stubbed Resposne body as (This is configurable in policy)
+```bash
+ {
+  "id": 1234,
+  "name": "Stub Response",
+  "gender": "Male",
+  "designation": "lead",
+  "department": "Integration",
+  "location": "UK"
+}
+  ```
+
 new header as well added in response
 
 ## Contributing
